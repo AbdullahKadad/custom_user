@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block user_info %}
+    {% if user.is_authenticated %}
+        <div class="user-info">
+            <p>Welcome, {{ user.username }}!</p>
+            <p>Balance: ${{ user.balance }}</p>
+        </div>
+    {% else %}
+        <div class="login-link">
+            <a href="{% url 'login' %}">Log In</a>
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+    <div class="hero">
+        <h2>Your Library</h2>
+        <p>Here are the games you have in your library:</p>
+    </div>
+
+    <div class="game-cards">
+        {% for library in libraries %}
+            <div class="card">
+                <img class="card-image" src="{{ library.game.img_url }}" alt="{{ library.game.name }}">
+                <div class="card-body">
+                    <h3>{{ library.game.name }}</h3>
+                    <p>${{ library.game.price }}</p>
+                    <p>Date Added: {{ library.date_added|date:"F j, Y" }}</p>
+                </div>
+            </div>
+        {% empty %}
+            <p>Your library is empty.</p>
+        {% endfor %}
+    </div>
+{% endblock %}

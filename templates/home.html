@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block user_info %}
+{% if user.is_authenticated %}
+<div class="user-info">
+    <p>Welcome, {{ user.username }}!</p>
+    <p>Balance: ${{ user.balance }}</p>
+    <form method="POST" action="{% url 'logout' %}">
+        {% csrf_token %}
+        <button type="submit">Logout</button>
+    </form>
+</div>
+{% else %}
+<div class="login-link">
+    <a href="{% url 'login' %}">Log In</a>
+    <a href="{% url 'Register' %}">Register</a>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block link %}
+{% if user.is_authenticated %}
+<li><a href="{% url 'library' %}">Library</a></li>
+{% endif %}
+{% endblock link %}
+
+{% block content %}
+<div class="hero">
+    <h2>Welcome to the Game Store</h2>
+    <p>Discover and purchase your favorite games.</p>
+</div>
+
+<div class="game-cards">
+    {% for game in games %}
+    <div class="card">
+        <img src="{{ game.img_url }}" alt="{{ game.name }}" class="card-image">
+        <div class="card-body">
+            <h3>{{ game.name }}</h3>
+            <p>${{ game.price }}</p>
+            {% if user.is_authenticated %}
+            <form method="POST" action="{% url 'purchase_game' game.id %}">
+                {% csrf_token %}
+                <button type="submit" class="purchase-button">Purchase</button>
+            </form>
+            {% endif %}
+        </div>
+    </div>
+    {% empty %}
+    <p>No games available at the moment.</p>
+    {% endfor %}
+</div>
+{% endblock %}
